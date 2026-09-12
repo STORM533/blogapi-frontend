@@ -4,17 +4,6 @@ import { MemoryRouter } from "react-router-dom";
 import PostList from "../PostList";
 import type { Post, Pagination } from "../../types";
 
-vi.mock("../context/AuthContext", () => ({
-  useAuth: () => ({
-    user: null,
-    token: null,
-    loading: false,
-    login: vi.fn(),
-    signup: vi.fn(),
-    logout: vi.fn(),
-  }),
-}));
-
 const mockPosts: Post[] = [
   {
     id: 1,

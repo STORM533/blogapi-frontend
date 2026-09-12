@@ -1,6 +1,13 @@
 import { apiFetch } from "./client";
 import type { PaginatedPosts, Post, PostFormData } from "../types";
 
+export interface PostStats {
+  totalPosts: number;
+  publishedPosts: number;
+  draftPosts: number;
+  totalComments: number;
+}
+
 export async function getPosts(
   page = 1,
   limit = 10,
@@ -10,6 +17,10 @@ export async function getPosts(
 
 export async function getPost(id: number): Promise<Post> {
   return apiFetch<Post>(`/posts/${id}`);
+}
+
+export async function getPostStats(): Promise<PostStats> {
+  return apiFetch<PostStats>("/posts/stats");
 }
 
 export async function createPost(data: PostFormData): Promise<Post> {

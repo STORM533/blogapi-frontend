@@ -17,7 +17,7 @@ export default function HomePage() {
 
   const fetchPosts = async (page: number) => {
     try {
-      setLoading(true);
+      setLoading(posts.length === 0);
       setError(null);
       const data = await getPosts(page);
       setPosts(data.posts);
@@ -33,9 +33,9 @@ export default function HomePage() {
     fetchPosts(1);
   }, []);
 
-  if (loading) return <LoadingSpinner />;
+  if (loading && posts.length === 0) return <LoadingSpinner />;
 
-  if (error) {
+  if (error && posts.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-red-600">{error}</p>
@@ -52,6 +52,11 @@ export default function HomePage() {
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Latest Posts</h1>
+      {loading && (
+        <div className="text-center py-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto" />
+        </div>
+      )}
       <PostList
         posts={posts}
         pagination={pagination}

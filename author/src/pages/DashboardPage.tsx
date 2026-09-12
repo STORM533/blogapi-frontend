@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getPosts } from "../api/posts";
+import { getPostStats } from "../api/posts";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function DashboardPage() {
@@ -14,17 +14,8 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const data = await getPosts(1, 1000);
-        const posts = data.posts;
-        setStats({
-          totalPosts: data.pagination.total,
-          publishedPosts: posts.filter((p) => p.published).length,
-          draftPosts: posts.filter((p) => !p.published).length,
-          totalComments: posts.reduce(
-            (sum, p) => sum + (p._count?.comments || 0),
-            0,
-          ),
-        });
+        const data = await getPostStats();
+        setStats(data);
       } catch {
         console.error("Failed to fetch stats");
       } finally {

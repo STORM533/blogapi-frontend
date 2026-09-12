@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getPosts, deletePost, setPostPublished } from "../api/posts";
 import type { Post, Pagination } from "../types";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { useToast } from "../context/ToastContext";
 
 export default function PostsPage() {
@@ -16,6 +17,8 @@ export default function PostsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { showToast } = useToast();
+
+  const [deleteTarget, setDeleteTarget] = useState<Post | null>(null);
 
   const fetchPosts = useCallback(async (page: number) => {
     try {
@@ -35,12 +38,12 @@ export default function PostsPage() {
     fetchPosts(1);
   }, [fetchPosts]);
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
 
     try {
-      await deletePost(id);
-      setPosts((prev) => prev.filter((p) => p.id !== id));
+      await deletePost(deleteTarget.id);
+      setPosts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
       setPagination((prev) => ({
         ...prev,
         total: prev.total - 1,
@@ -48,6 +51,8 @@ export default function PostsPage() {
       showToast("Post deleted");
     } catch {
       showToast("Failed to delete post", "error");
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -95,73 +100,75 @@ export default function PostsPage() {
         <p className="text-gray-500">No posts yet.</p>
       ) : (
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Title
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Comments
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {posts.map((post) => (
-                <tr key={post.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Link
-                      to={`/posts/${post.id}/edit`}
-                      className="text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      {post.title}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleTogglePublish(post)}
-                      className={`px-2 py-1 text-xs rounded ${
-                        post.published
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {post.published ? "Published" : "Draft"}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {post._count?.comments || 0}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                    <Link
-                      to={`/posts/${post.id}/edit`}
-                      className="text-blue-600 hover:text-blue-800 mr-3"
-                    >
-                      Edit
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(post.id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      Delete
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Title
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                    Comments
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                    Created
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {posts.map((post) => (
+                  <tr key={post.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Link
+                        to={`/posts/${post.id}/edit`}
+                        className="text-blue-600 hover:text-blue-800 font-medium"
+                      >
+                        {post.title}
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => handleTogglePublish(post)}
+                        className={`px-2 py-1 text-xs rounded ${
+                          post.published
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {post.published ? "Published" : "Draft"}
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                      {post._count?.comments || 0}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                      {new Date(post.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                      <Link
+                        to={`/posts/${post.id}/edit`}
+                        className="text-blue-600 hover:text-blue-800 mr-3"
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => setDeleteTarget(post)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -186,6 +193,14 @@ export default function PostsPage() {
           </button>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={deleteTarget !== null}
+        title="Delete Post"
+        message={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }
