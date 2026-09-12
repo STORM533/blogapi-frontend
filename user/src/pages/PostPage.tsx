@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import PostContent from "../components/PostContent";
+import CommentSection from "../components/CommentSection";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { useState, useEffect } from "react";
 import { getPost } from "../api/posts";
 import type { PostDetail } from "../types";
-import PostContent from "../components/PostContent";
-import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function PostPage() {
   const { id } = useParams<{ id: string }>();
@@ -40,5 +41,10 @@ export default function PostPage() {
     );
   }
 
-  return <PostContent post={post} />;
+  return (
+    <div>
+      <PostContent post={post} />
+      <CommentSection postId={post.id} />
+    </div>
+  );
 }
