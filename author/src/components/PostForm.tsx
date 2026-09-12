@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 import type { PostFormData } from "../types";
 
 interface PostFormProps {
@@ -58,19 +59,43 @@ export default function PostForm({
       </div>
 
       <div>
-        <label
-          htmlFor="content"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           Content
         </label>
-        <textarea
-          id="content"
-          required
-          rows={12}
+        <Editor
+          tinymceScriptSrc="/tinymce/tinymce.min.js"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onEditorChange={(newContent) => setContent(newContent)}
+          init={{
+            height: 500,
+            menubar: false,
+            plugins: [
+              "advlist",
+              "autolink",
+              "lists",
+              "link",
+              "charmap",
+              "preview",
+              "anchor",
+              "searchreplace",
+              "visualblocks",
+              "code",
+              "fullscreen",
+              "insertdatetime",
+              "media",
+              "table",
+              "help",
+              "wordcount",
+            ],
+            toolbar:
+              "undo redo | blocks | bold italic underline strikethrough | " +
+              "alignleft aligncenter alignright alignjustify | " +
+              "bullist numlist outdent indent | link | removeformat | help",
+            content_style:
+              "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; }",
+            branding: false,
+            promotion: false,
+          }}
         />
       </div>
 

@@ -11,9 +11,11 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "@tinymce/tinymce-react": "^6.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "tinymce": "^8.9.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^7.0.1",

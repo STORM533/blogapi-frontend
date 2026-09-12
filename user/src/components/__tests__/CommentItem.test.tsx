@@ -28,7 +28,7 @@ describe("CommentItem", () => {
   it("renders comment content", () => {
     render(
       <MemoryRouter>
-        <CommentItem comment={mockComment} />
+        <CommentItem comment={mockComment} onCommentSaved={vi.fn()} />
       </MemoryRouter>,
     );
     expect(screen.getByText("This is a test comment.")).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("CommentItem", () => {
   it("renders username", () => {
     render(
       <MemoryRouter>
-        <CommentItem comment={mockComment} />
+        <CommentItem comment={mockComment} onCommentSaved={vi.fn()} />
       </MemoryRouter>,
     );
     expect(screen.getByText("commenter")).toBeInTheDocument();
@@ -46,7 +46,7 @@ describe("CommentItem", () => {
   it("renders formatted date", () => {
     render(
       <MemoryRouter>
-        <CommentItem comment={mockComment} />
+        <CommentItem comment={mockComment} onCommentSaved={vi.fn()} />
       </MemoryRouter>,
     );
     expect(screen.getByText(/15\/01\/2024/)).toBeInTheDocument();

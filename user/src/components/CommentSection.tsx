@@ -25,7 +25,11 @@ export default function CommentSection({
 
       <div className="mt-4">
         {post.comments.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} />
+          <CommentItem
+            key={comment.id}
+            comment={comment}
+            onCommentSaved={onCommentAdded}
+          />
         ))}
       </div>
     </div>
