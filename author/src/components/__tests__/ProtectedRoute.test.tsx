@@ -6,7 +6,6 @@ import ProtectedRoute from "../ProtectedRoute";
 vi.mock("../../context/AuthContext", () => ({
   useAuth: () => ({
     user: null,
-    token: null,
     loading: false,
     isAuthor: false,
     login: vi.fn(),

@@ -4,6 +4,7 @@ import type { User, MyComment, Pagination } from "../types";
 import ProtectedRoute from "../components/ProtectedRoute";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Link } from "react-router-dom";
+import styles from "../styles/app.module.css";
 
 function ProfileContent() {
   const [user, setUser] = useState<User | null>(null);
@@ -18,17 +19,19 @@ function ProfileContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchData = async () => {
       try {
         setLoading(true);
         const [userData, commentsData] = await Promise.all([
-          getMe(),
-          getMyComments(1, 10),
+          getMe(controller.signal),
+          getMyComments(1, 10, controller.signal),
         ]);
         setUser(userData);
         setComments(commentsData.comments);
         setPagination(commentsData.pagination);
       } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         setError(err instanceof Error ? err.message : "Failed to load profile");
       } finally {
         setLoading(false);
@@ -36,63 +39,62 @@ function ProfileContent() {
     };
 
     fetchData();
+    return () => controller.abort();
   }, []);
 
   if (loading) return <LoadingSpinner />;
 
   if (error || !user) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-600">{error || "Failed to load profile"}</p>
+      <div className={styles.errorWrap}>
+        <p className={styles.errorText}>{error || "Failed to load profile"}</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Profile</h1>
+    <div className={styles.profileWrap}>
+      <h1 className={styles.pageTitle}>Profile</h1>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
-        <div className="space-y-3">
+      <div className={styles.infoCard}>
+        <div className={styles.infoFields}>
           <div>
-            <span className="text-sm text-gray-500">Username</span>
-            <p className="text-gray-900 font-medium">{user.username}</p>
+            <span className={styles.fieldLabel}>Username</span>
+            <p className={styles.fieldValue}>{user.username}</p>
           </div>
           <div>
-            <span className="text-sm text-gray-500">Email</span>
-            <p className="text-gray-900 font-medium">{user.email}</p>
+            <span className={styles.fieldLabel}>Email</span>
+            <p className={styles.fieldValue}>{user.email}</p>
           </div>
           <div>
-            <span className="text-sm text-gray-500">Role</span>
-            <p className="text-gray-900 font-medium">{user.role}</p>
-          </div>
-          <div>
-            <span className="text-sm text-gray-500">Joined</span>
-            <p className="text-gray-900 font-medium">
+            <span className={styles.fieldLabel}>Joined</span>
+            <p className={styles.fieldValue}>
               {new Date(user.createdAt).toLocaleDateString()}
             </p>
           </div>
         </div>
       </div>
 
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">
+      <h2 className={styles.sectionTitle}>
         Your Comments ({pagination.total})
       </h2>
 
       {comments.length === 0 ? (
-        <p className="text-gray-500">You haven't posted any comments yet.</p>
+        <p className={styles.emptyProfileComments}>
+          You haven't posted any comments yet.
+        </p>
       ) : (
-        <div className="space-y-4">
+        <div className={styles.profileCommentList}>
           {comments.map((comment) => (
-            <div key={comment.id} className="bg-white rounded-lg shadow p-4">
+            <div key={comment.id} className={styles.profileCommentCard}>
               <Link
                 to={`/post/${comment.post.id}`}
-                className="text-blue-600 hover:text-blue-800 font-medium"
+                className={styles.profileCommentLink}
               >
                 {comment.post.title}
               </Link>
-              <p className="mt-2 text-gray-700">{comment.content}</p>
-              <p className="mt-2 text-xs text-gray-500">
+              <p className={styles.profileCommentText}>{comment.content}</p>
+              <p className={styles.profileCommentDate}>
                 {new Date(comment.createdAt).toLocaleDateString()}
               </p>
             </div>

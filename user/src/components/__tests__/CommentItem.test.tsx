@@ -6,7 +6,6 @@ import CommentItem from "../CommentItem";
 vi.mock("../../context/AuthContext", () => ({
   useAuth: () => ({
     user: null,
-    token: null,
     loading: false,
     login: vi.fn(),
     signup: vi.fn(),

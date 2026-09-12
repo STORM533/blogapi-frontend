@@ -4,16 +4,18 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import type { User, LoginRequest, SignupRequest } from "../types";
 import { getMe } from "../api/users";
 import { login as apiLogin, signup as apiSignup } from "../api/auth";
-import { getToken, setToken, clearToken } from "../utils/token";
+import { apiFetch } from "../api/client";
+import { setOnUnauthorized } from "../api/client";
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
   loading: boolean;
   login: (data: LoginRequest) => Promise<void>;
   signup: (data: SignupRequest) => Promise<void>;
@@ -24,49 +26,60 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setTokenState] = useState<string | null>(getToken());
   const [loading, setLoading] = useState(true);
+  const abortRef = useRef<AbortController | null>(null);
+  const navigate = useNavigate();
 
-  const fetchUser = useCallback(async (authToken: string) => {
+  const logout = useCallback(() => {
+    abortRef.current?.abort();
+    apiFetch("/auth/logout", { method: "POST" }).catch(() => {});
+    setUser(null);
+    setLoading(false);
+    navigate("/login");
+  }, [navigate]);
+
+  useEffect(() => {
+    setOnUnauthorized(() => {
+      if (user) logout();
+    });
+    return () => setOnUnauthorized(null);
+  }, [logout, user]);
+
+  const fetchUser = useCallback(async (signal?: AbortSignal) => {
     try {
-      setToken(authToken);
-      const userData = await getMe();
+      const userData = await getMe(signal);
       setUser(userData);
     } catch {
-      clearToken();
-      setTokenState(null);
-      setUser(null);
+      if (!signal?.aborted) {
+        setUser(null);
+      }
     }
   }, []);
 
   useEffect(() => {
-    if (token) {
-      fetchUser(token).finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, [token, fetchUser]);
+    let active = true;
+    const controller = new AbortController();
+    abortRef.current = controller;
+    fetchUser(controller.signal).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [fetchUser]);
 
   const login = async (data: LoginRequest) => {
-    const response = await apiLogin(data);
-    setTokenState(response.token);
-    await fetchUser(response.token);
+    await apiLogin(data);
+    await fetchUser();
   };
 
   const signup = async (data: SignupRequest) => {
     await apiSignup(data);
   };
 
-  const logout = () => {
-    clearToken();
-    setTokenState(null);
-    setUser(null);
-  };
-
   return (
-    <AuthContext.Provider
-      value={{ user, token, loading, login, signup, logout }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

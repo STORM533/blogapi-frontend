@@ -1,10 +1,11 @@
 import SignupForm from "../components/SignupForm";
+import styles from "../styles/app.module.css";
 
 export default function SignupPage() {
   return (
-    <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Sign Up</h1>
-      <div className="bg-white rounded-lg shadow p-6">
+    <div className={styles.authPageWrap}>
+      <h1 className={styles.authPageTitle}>Sign Up</h1>
+      <div className={styles.card}>
         <SignupForm />
       </div>
     </div>

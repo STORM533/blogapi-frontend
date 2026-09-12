@@ -3,6 +3,8 @@ import { createComment } from "../api/comments";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Link } from "react-router-dom";
+import { FetchError } from "../api/client";
+import styles from "../styles/app.module.css";
 
 interface CommentFormProps {
   postId: number;
@@ -12,6 +14,7 @@ interface CommentFormProps {
 export default function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { showToast } = useToast();
@@ -19,6 +22,7 @@ export default function CommentForm({ postId, onCommentAdded }: CommentFormProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -27,7 +31,16 @@ export default function CommentForm({ postId, onCommentAdded }: CommentFormProps
       showToast("Comment posted!");
       onCommentAdded();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to post comment");
+      if (err instanceof FetchError && err.data.errors?.length) {
+        const fields: Record<string, string> = {};
+        err.data.errors.forEach((e) => {
+          if (e.field) fields[e.field] = e.message;
+        });
+        setFieldErrors(fields);
+        setError(err.data.message);
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to post comment");
+      }
     } finally {
       setLoading(false);
     }
@@ -35,8 +48,8 @@ export default function CommentForm({ postId, onCommentAdded }: CommentFormProps
 
   if (!user) {
     return (
-      <p className="text-sm text-gray-600">
-        <Link to="/login" className="text-blue-600 hover:text-blue-800">
+      <p className={styles.loginPrompt}>
+        <Link to="/login" className={styles.loginLink}>
           Login
         </Link>{" "}
         to leave a comment.
@@ -45,24 +58,22 @@ export default function CommentForm({ postId, onCommentAdded }: CommentFormProps
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      {error && (
-        <div className="bg-red-50 text-red-600 p-2 rounded text-sm">
-          {error}
-        </div>
-      )}
+    <form onSubmit={handleSubmit} className={styles.commentForm}>
+      {error && <div className={styles.errorAlertSm}>{error}</div>}
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         required
         rows={3}
+        maxLength={2000}
         placeholder="Write a comment..."
-        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className={styles.commentTextarea}
       />
+      {fieldErrors.content && <p className={styles.fieldError}>{fieldErrors.content}</p>}
       <button
         type="submit"
         disabled={loading || !content.trim()}
-        className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+        className={styles.btnPrimary}
       >
         {loading ? "Posting..." : "Post Comment"}
       </button>

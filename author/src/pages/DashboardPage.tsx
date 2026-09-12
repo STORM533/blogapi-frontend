@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getPostStats } from "../api/posts";
 import LoadingSpinner from "../components/LoadingSpinner";
+import styles from "../styles/app.module.css";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState({
@@ -12,55 +13,47 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchStats = async () => {
       try {
-        const data = await getPostStats();
+        const data = await getPostStats(controller.signal);
         setStats(data);
-      } catch {
-        console.error("Failed to fetch stats");
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
       } finally {
         setLoading(false);
       }
     };
 
     fetchStats();
+    return () => controller.abort();
   }, []);
 
   if (loading) return <LoadingSpinner />;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+      <h1 className={styles.pageTitleSpaced}>Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-sm font-medium text-gray-500">Total Posts</h2>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {stats.totalPosts}
-          </p>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h2 className={styles.statLabel}>Total Posts</h2>
+          <p className={styles.statValue}>{stats.totalPosts}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-sm font-medium text-gray-500">Published</h2>
-          <p className="mt-2 text-3xl font-bold text-green-600">
-            {stats.publishedPosts}
-          </p>
+        <div className={styles.statCard}>
+          <h2 className={styles.statLabel}>Published</h2>
+          <p className={styles.statValueGreen}>{stats.publishedPosts}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-sm font-medium text-gray-500">Drafts</h2>
-          <p className="mt-2 text-3xl font-bold text-yellow-600">
-            {stats.draftPosts}
-          </p>
+        <div className={styles.statCard}>
+          <h2 className={styles.statLabel}>Drafts</h2>
+          <p className={styles.statValueYellow}>{stats.draftPosts}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-sm font-medium text-gray-500">
-            Total Comments
-          </h2>
-          <p className="mt-2 text-3xl font-bold text-blue-600">
-            {stats.totalComments}
-          </p>
+        <div className={styles.statCard}>
+          <h2 className={styles.statLabel}>Total Comments</h2>
+          <p className={styles.statValueBlue}>{stats.totalComments}</p>
         </div>
       </div>
     </div>

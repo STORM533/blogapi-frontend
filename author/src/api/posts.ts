@@ -11,16 +11,17 @@ export interface PostStats {
 export async function getPosts(
   page = 1,
   limit = 10,
+  signal?: AbortSignal,
 ): Promise<PaginatedPosts> {
-  return apiFetch<PaginatedPosts>(`/posts?page=${page}&limit=${limit}`);
+  return apiFetch<PaginatedPosts>(`/posts?page=${page}&limit=${limit}`, { signal });
 }
 
-export async function getPost(id: number): Promise<Post> {
-  return apiFetch<Post>(`/posts/${id}`);
+export async function getPost(id: number, signal?: AbortSignal): Promise<Post> {
+  return apiFetch<Post>(`/posts/${id}`, { signal });
 }
 
-export async function getPostStats(): Promise<PostStats> {
-  return apiFetch<PostStats>("/posts/stats");
+export async function getPostStats(signal?: AbortSignal): Promise<PostStats> {
+  return apiFetch<PostStats>("/posts/stats", { signal });
 }
 
 export async function createPost(data: PostFormData): Promise<Post> {

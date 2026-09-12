@@ -33,9 +33,11 @@ describe("PostContent", () => {
     expect(screen.getByText(/15\/01\/2024/)).toBeInTheDocument();
   });
 
-  it("renders post content paragraphs", () => {
-    render(<PostContent post={mockPost} />);
-    expect(screen.getByText("First paragraph.")).toBeInTheDocument();
-    expect(screen.getByText("Second paragraph.")).toBeInTheDocument();
+  it("renders post content", () => {
+    const { container } = render(<PostContent post={mockPost} />);
+    const content = container.querySelector("[class*='articleContent']");
+    expect(content).toBeInTheDocument();
+    expect(content?.textContent).toContain("First paragraph.");
+    expect(content?.textContent).toContain("Second paragraph.");
   });
 });

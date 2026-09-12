@@ -56,3 +56,13 @@ export interface LoginRequest {
 export interface LoginResponse {
   token: string;
 }
+
+export interface Comment {
+  id: number;
+  content: string;
+  createdAt: string;
+  user: {
+    id: number;
+    username: string;
+  };
+}

@@ -2,6 +2,8 @@ import { useState } from "react";
 import type { Comment } from "../types";
 import { useAuth } from "../context/AuthContext";
 import { updateComment, deleteComment } from "../api/comments";
+import { FetchError } from "../api/client";
+import styles from "../styles/app.module.css";
 
 interface CommentItemProps {
   comment: Comment;
@@ -20,17 +22,28 @@ export default function CommentItem({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleSave = async () => {
     if (!editContent.trim()) return;
     setLoading(true);
     setError(null);
+    setFieldErrors({});
     try {
       await updateComment(comment.id, editContent.trim());
       setIsEditing(false);
       onCommentSaved();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update comment");
+      if (err instanceof FetchError && err.data.errors?.length) {
+        const fields: Record<string, string> = {};
+        err.data.errors.forEach((e) => {
+          if (e.field) fields[e.field] = e.message;
+        });
+        setFieldErrors(fields);
+        setError(err.data.message);
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to update comment");
+      }
     } finally {
       setLoading(false);
     }
@@ -51,34 +64,31 @@ export default function CommentItem({
   };
 
   return (
-    <div className="border-b border-gray-100 py-3 sm:py-4 last:border-0">
-      <div className="flex items-center gap-2 mb-1 sm:mb-2">
-        <span className="text-sm font-medium text-gray-900">
+    <div className={styles.commentItem}>
+      <div className={styles.commentHeader}>
+        <span className={styles.commentUsername}>
           {comment.user.username}
         </span>
-        {isOwner && (
-          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
-            You
-          </span>
-        )}
-        <span className="text-xs sm:text-sm text-gray-500">
+        {isOwner && <span className={styles.youBadge}>You</span>}
+        <span className={styles.commentDate}>
           · {new Date(comment.createdAt).toLocaleDateString()}
         </span>
         {isOwner && !isEditing && (
-          <div className="flex gap-2 ml-auto">
+          <div className={styles.commentActions}>
             <button
               onClick={() => {
                 setIsEditing(true);
                 setEditContent(comment.content);
                 setError(null);
+                setFieldErrors({});
               }}
-              className="text-xs text-blue-600 hover:text-blue-800"
+              className={styles.commentEditBtn}
             >
               Edit
             </button>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="text-xs text-red-600 hover:text-red-800"
+              className={styles.commentDeleteBtn}
             >
               Delete
             </button>
@@ -86,23 +96,22 @@ export default function CommentItem({
         )}
       </div>
 
-      {error && (
-        <p className="text-sm text-red-600 mb-2">{error}</p>
-      )}
+      {error && <p className={styles.commentError}>{error}</p>}
 
       {isEditing ? (
         <div>
           <textarea
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className={styles.editTextarea}
             rows={3}
           />
-          <div className="flex gap-2 mt-2">
+          {fieldErrors.content && <p className={styles.fieldError}>{fieldErrors.content}</p>}
+          <div className={styles.editActions}>
             <button
               onClick={handleSave}
               disabled={loading || !editContent.trim()}
-              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              className={styles.btnPrimary}
             >
               {loading ? "Saving..." : "Save"}
             </button>
@@ -111,21 +120,22 @@ export default function CommentItem({
                 setIsEditing(false);
                 setEditContent(comment.content);
                 setError(null);
+                setFieldErrors({});
               }}
-              className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+              className={styles.cancelTextBtn}
             >
               Cancel
             </button>
           </div>
         </div>
       ) : showDeleteConfirm ? (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-sm text-red-800 mb-2">Delete this comment?</p>
-          <div className="flex gap-2">
+        <div className={styles.deleteConfirm}>
+          <p className={styles.deleteConfirmText}>Delete this comment?</p>
+          <div className={styles.deleteConfirmActions}>
             <button
               onClick={handleDelete}
               disabled={loading}
-              className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+              className={styles.btnDanger}
             >
               {loading ? "Deleting..." : "Delete"}
             </button>
@@ -134,14 +144,14 @@ export default function CommentItem({
                 setShowDeleteConfirm(false);
                 setError(null);
               }}
-              className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+              className={styles.cancelTextBtn}
             >
               Cancel
             </button>
           </div>
         </div>
       ) : (
-        <p className="text-sm sm:text-base text-gray-700">{comment.content}</p>
+        <p className={styles.commentBody}>{comment.content}</p>
       )}
     </div>
   );

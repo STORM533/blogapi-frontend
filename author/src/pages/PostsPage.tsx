@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getPosts, deletePost, setPostPublished } from "../api/posts";
 import type { Post, Pagination } from "../types";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useToast } from "../context/ToastContext";
+import styles from "../styles/app.module.css";
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -17,17 +18,23 @@ export default function PostsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { showToast } = useToast();
+  const abortRef = useRef<AbortController | null>(null);
 
   const [deleteTarget, setDeleteTarget] = useState<Post | null>(null);
 
   const fetchPosts = useCallback(async (page: number) => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
       setLoading(true);
       setError(null);
-      const data = await getPosts(page);
+      const data = await getPosts(page, 10, controller.signal);
       setPosts(data.posts);
       setPagination(data.pagination);
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setError("Failed to load posts");
     } finally {
       setLoading(false);
@@ -36,6 +43,7 @@ export default function PostsPage() {
 
   useEffect(() => {
     fetchPosts(1);
+    return () => abortRef.current?.abort();
   }, [fetchPosts]);
 
   const handleDelete = async () => {
@@ -72,12 +80,9 @@ export default function PostsPage() {
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-600">{error}</p>
-        <button
-          onClick={() => fetchPosts(1)}
-          className="mt-4 text-blue-600 hover:text-blue-800"
-        >
+      <div className={styles.errorWrap}>
+        <p className={styles.errorText}>{error}</p>
+        <button onClick={() => fetchPosts(1)} className={styles.retryBtn}>
           Try again
         </button>
       </div>
@@ -86,81 +91,55 @@ export default function PostsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Posts</h1>
-        <Link
-          to="/posts/new"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Posts</h1>
+        <Link to="/posts/new" className={styles.newPostBtn}>
           New Post
         </Link>
       </div>
 
       {posts.length === 0 ? (
-        <p className="text-gray-500">No posts yet.</p>
+        <p className={styles.errorText} style={{ color: "#6b7280" }}>No posts yet.</p>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                    Comments
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+        <div className={styles.tableCard}>
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead className={styles.tableHead}>
+                <tr className={styles.tableHeadRow}>
+                  <th className={styles.th}>Title</th>
+                  <th className={styles.th}>Status</th>
+                  <th className={`${styles.th} ${styles.tableRowHidden}`}>Comments</th>
+                  <th className={`${styles.th} ${styles.tableRowHidden}`}>Created</th>
+                  <th className={styles.thActions}>Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody>
                 {posts.map((post) => (
-                  <tr key={post.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Link
-                        to={`/posts/${post.id}/edit`}
-                        className="text-blue-600 hover:text-blue-800 font-medium"
-                      >
+                  <tr key={post.id} className={styles.tableRow}>
+                    <td className={styles.td}>
+                      <Link to={`/posts/${post.id}/edit`} className={styles.textLink}>
                         {post.title}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className={styles.td}>
                       <button
                         onClick={() => handleTogglePublish(post)}
-                        className={`px-2 py-1 text-xs rounded ${
-                          post.published
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
+                        className={`${styles.statusBtn} ${post.published ? styles.statusPublished : styles.statusDraft}`}
                       >
                         {post.published ? "Published" : "Draft"}
                       </button>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                    <td className={`${styles.td} ${styles.tableRowHidden}`}>
                       {post._count?.comments || 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                    <td className={`${styles.td} ${styles.tableRowHidden}`}>
                       {new Date(post.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <Link
-                        to={`/posts/${post.id}/edit`}
-                        className="text-blue-600 hover:text-blue-800 mr-3"
-                      >
+                    <td className={styles.tdActions}>
+                      <Link to={`/posts/${post.id}/edit`} className={styles.textLink}>
                         Edit
                       </Link>
-                      <button
-                        onClick={() => setDeleteTarget(post)}
-                        className="text-red-600 hover:text-red-800"
-                      >
+                      <button onClick={() => setDeleteTarget(post)} className={styles.deleteBtn}>
                         Delete
                       </button>
                     </td>
@@ -173,21 +152,21 @@ export default function PostsPage() {
       )}
 
       {pagination.totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className={styles.pagination}>
           <button
             onClick={() => fetchPosts(pagination.page - 1)}
             disabled={pagination.page <= 1}
-            className="px-3 py-1 text-sm border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+            className={styles.pageBtn}
           >
             Previous
           </button>
-          <span className="text-sm text-gray-600">
+          <span className={styles.pageInfo}>
             Page {pagination.page} of {pagination.totalPages}
           </span>
           <button
             onClick={() => fetchPosts(pagination.page + 1)}
             disabled={pagination.page >= pagination.totalPages}
-            className="px-3 py-1 text-sm border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+            className={styles.pageBtn}
           >
             Next
           </button>
