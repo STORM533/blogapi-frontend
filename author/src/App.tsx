@@ -6,6 +6,7 @@ import DashboardPage from "./pages/DashboardPage";
 import PostsPage from "./pages/PostsPage";
 import CreatePostPage from "./pages/CreatePostPage";
 import EditPostPage from "./pages/EditPostPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/posts" element={<PostsPage />} />
         <Route path="/posts/new" element={<CreatePostPage />} />
         <Route path="/posts/:id/edit" element={<EditPostPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

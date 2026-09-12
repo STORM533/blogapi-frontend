@@ -24,7 +24,7 @@ export async function updatePost(
   data: PostFormData,
 ): Promise<Post> {
   return apiFetch<Post>(`/posts/${id}`, {
-    method: "PUT",
+    method: "PATCH",
     body: JSON.stringify(data),
   });
 }

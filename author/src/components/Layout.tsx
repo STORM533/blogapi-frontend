@@ -5,8 +5,10 @@ export default function Layout() {
   const { user, logout } = useAuth();
   const location = useLocation();
 
-  const isActive = (path: string) =>
-    location.pathname === path ? "bg-gray-800" : "";
+  const isActive = (path: string) => {
+    if (path === "/") return location.pathname === "/" ? "bg-gray-800" : "";
+    return location.pathname.startsWith(path) ? "bg-gray-800" : "";
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
