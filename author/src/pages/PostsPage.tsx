@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getPosts, deletePost, setPostPublished } from "../api/posts";
 import type { Post, Pagination } from "../types";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useToast } from "../context/ToastContext";
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -14,6 +15,7 @@ export default function PostsPage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const fetchPosts = useCallback(async (page: number) => {
     try {
@@ -43,8 +45,9 @@ export default function PostsPage() {
         ...prev,
         total: prev.total - 1,
       }));
+      showToast("Post deleted");
     } catch {
-      alert("Failed to delete post");
+      showToast("Failed to delete post", "error");
     }
   };
 
@@ -52,8 +55,11 @@ export default function PostsPage() {
     try {
       const updated = await setPostPublished(post.id, !post.published);
       setPosts((prev) => prev.map((p) => (p.id === post.id ? updated : p)));
+      showToast(
+        updated.published ? "Post published" : "Post unpublished",
+      );
     } catch {
-      alert("Failed to update post");
+      showToast("Failed to update post", "error");
     }
   };
 

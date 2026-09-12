@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getPost, updatePost } from "../api/posts";
 import PostForm from "../components/PostForm";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useToast } from "../context/ToastContext";
 import type { PostFormData } from "../types";
 
 export default function EditPostPage() {
@@ -11,6 +12,7 @@ export default function EditPostPage() {
   const [post, setPost] = useState<PostFormData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (!id) return;
@@ -36,6 +38,7 @@ export default function EditPostPage() {
   const handleSubmit = async (data: PostFormData) => {
     if (!id) return;
     await updatePost(Number(id), data);
+    showToast("Post updated");
     navigate("/posts");
   };
 

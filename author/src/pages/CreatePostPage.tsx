@@ -1,13 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { createPost } from "../api/posts";
 import PostForm from "../components/PostForm";
+import { useToast } from "../context/ToastContext";
 import type { PostFormData } from "../types";
 
 export default function CreatePostPage() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const handleSubmit = async (data: PostFormData) => {
     await createPost(data);
+    showToast("Post created");
     navigate("/posts");
   };
 
