@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 export default function SignupForm() {
   const [username, setUsername] = useState("");
@@ -9,6 +10,7 @@ export default function SignupForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,6 +20,7 @@ export default function SignupForm() {
 
     try {
       await signup({ username, email, password });
+      showToast("Account created! Please log in.");
       navigate("/login");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed");

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createComment } from "../api/comments";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { Link } from "react-router-dom";
 
 interface CommentFormProps {
@@ -13,6 +14,7 @@ export default function CommentForm({ postId, onCommentAdded }: CommentFormProps
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +24,7 @@ export default function CommentForm({ postId, onCommentAdded }: CommentFormProps
     try {
       await createComment(postId, content);
       setContent("");
+      showToast("Comment posted!");
       onCommentAdded();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to post comment");
