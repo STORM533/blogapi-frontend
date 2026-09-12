@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { FetchError } from "../api/client";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import compStyles from "../styles/components.module.css";
 
 export default function LoginForm() {
   const [username, setUsername] = useState("");
@@ -42,11 +43,11 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.authForm}>
-      {error && <div className={styles.errorAlert}>{error}</div>}
+    <form onSubmit={handleSubmit} className={compStyles.authForm}>
+      {error && <div className={compStyles.errorAlert}>{error}</div>}
 
       <div>
-        <label htmlFor="username" className={styles.label}>
+        <label htmlFor="username" className={commonStyles.label}>
           Username
         </label>
         <input
@@ -56,13 +57,13 @@ export default function LoginForm() {
           autoComplete="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className={styles.input}
+          className={commonStyles.input}
         />
-        {fieldErrors.username && <p className={styles.fieldError}>{fieldErrors.username}</p>}
+        {fieldErrors.username && <p className={compStyles.fieldError}>{fieldErrors.username}</p>}
       </div>
 
       <div>
-        <label htmlFor="password" className={styles.label}>
+        <label htmlFor="password" className={commonStyles.label}>
           Password
         </label>
         <input
@@ -72,23 +73,22 @@ export default function LoginForm() {
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className={styles.input}
+          className={commonStyles.input}
         />
-        {fieldErrors.password && <p className={styles.fieldError}>{fieldErrors.password}</p>}
+        {fieldErrors.password && <p className={compStyles.fieldError}>{fieldErrors.password}</p>}
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className={styles.btnPrimary}
-        style={{ width: "100%" }}
+        className={compStyles.authSubmit}
       >
         {loading ? "Logging in..." : "Login"}
       </button>
 
-      <p className={styles.authFormFooter}>
+      <p className={compStyles.authFormFooter}>
         Don't have an account?{" "}
-        <Link to="/signup" className={styles.authFormLink}>
+        <Link to="/signup" className={compStyles.authFormLink}>
           Sign up
         </Link>
       </p>

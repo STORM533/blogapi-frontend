@@ -5,7 +5,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getPost } from "../api/posts";
 import type { PostDetail } from "../types";
-import styles from "../styles/app.module.css";
+import styles from "../styles/common.module.css";
 
 export default function PostPage() {
   const { id } = useParams<{ id: string }>();

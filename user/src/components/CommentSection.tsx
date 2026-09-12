@@ -1,12 +1,14 @@
 import type { PostDetail } from "../types";
 import CommentItem from "./CommentItem";
 import CommentForm from "./CommentForm";
-import styles from "../styles/app.module.css";
+import styles from "../styles/components.module.css";
 
 interface CommentSectionProps {
   post: PostDetail;
   onCommentAdded: () => void;
 }
+
+const commentLabel = (n: number) => `${n} comment${n === 1 ? "" : "s"}`;
 
 export default function CommentSection({
   post,
@@ -15,7 +17,7 @@ export default function CommentSection({
   return (
     <div className={styles.commentSection}>
       <h2 className={styles.commentHeading}>
-        Comments ({post.comments.length})
+        {commentLabel(post.comments.length)}
       </h2>
 
       <CommentForm postId={post.id} onCommentAdded={onCommentAdded} />

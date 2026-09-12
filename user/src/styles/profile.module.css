@@ -1,0 +1,108 @@
+/* =========================
+   ProfilePage
+   ========================= */
+.profileWrap {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.infoCard {
+  background-color: transparent;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  border: 1px solid rgba(62, 107, 94, 0.15);
+  border-radius: 0.5rem;
+  padding-bottom: 2rem;
+}
+
+.infoFields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.fieldLabel {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-slate);
+  text-transform: lowercase;
+}
+
+.fieldValue {
+  font-family: var(--font-serif);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 1.25rem;
+}
+
+.emptyProfileComments {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--color-slate);
+}
+
+.profileCommentList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.profileCommentCard {
+  border: 1px solid rgba(62, 107, 94, 0.15);
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.profileCommentCard:last-child {
+  margin-bottom: 0;
+}
+
+.profileCommentLink {
+  font-family: var(--font-serif);
+  color: var(--color-ember);
+  font-weight: 600;
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+.profileCommentLink:hover {
+  color: var(--color-verdigris);
+}
+
+.profileCommentText {
+  margin-top: 0.5rem;
+  font-family: var(--font-serif);
+  color: var(--color-slate);
+  line-height: 1.6;
+  font-size: 1.0625rem;
+}
+
+.profileCommentDate {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--color-slate);
+}
+
+@media (min-width: 768px) {
+  .fieldLabel {
+    font-size: 16px;
+  }
+  .fieldValue {
+    font-size: 1.375rem;
+  }
+  .infoFields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem 3rem;
+  }
+}

@@ -4,7 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Link } from "react-router-dom";
 import { FetchError } from "../api/client";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import compStyles from "../styles/components.module.css";
 
 interface CommentFormProps {
   postId: number;
@@ -48,8 +49,8 @@ export default function CommentForm({ postId, onCommentAdded }: CommentFormProps
 
   if (!user) {
     return (
-      <p className={styles.loginPrompt}>
-        <Link to="/login" className={styles.loginLink}>
+      <p className={compStyles.loginPrompt}>
+        <Link to="/login" className={compStyles.loginLink}>
           Login
         </Link>{" "}
         to leave a comment.
@@ -58,8 +59,8 @@ export default function CommentForm({ postId, onCommentAdded }: CommentFormProps
   }
 
   return (
-    <form onSubmit={handleSubmit} className={styles.commentForm}>
-      {error && <div className={styles.errorAlertSm}>{error}</div>}
+    <form onSubmit={handleSubmit} className={compStyles.commentForm}>
+      {error && <div className={commonStyles.errorAlertSm}>{error}</div>}
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
@@ -67,13 +68,13 @@ export default function CommentForm({ postId, onCommentAdded }: CommentFormProps
         rows={3}
         maxLength={2000}
         placeholder="Write a comment..."
-        className={styles.commentTextarea}
+        className={compStyles.commentTextarea}
       />
-      {fieldErrors.content && <p className={styles.fieldError}>{fieldErrors.content}</p>}
+      {fieldErrors.content && <p className={compStyles.fieldError}>{fieldErrors.content}</p>}
       <button
         type="submit"
         disabled={loading || !content.trim()}
-        className={styles.btnPrimary}
+        className={compStyles.commentSubmit}
       >
         {loading ? "Posting..." : "Post Comment"}
       </button>

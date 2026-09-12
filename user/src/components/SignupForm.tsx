@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { FetchError } from "../api/client";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import compStyles from "../styles/components.module.css";
 
 export default function SignupForm() {
   const [username, setUsername] = useState("");
@@ -43,11 +44,11 @@ export default function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.authForm}>
-      {error && <div className={styles.errorAlert}>{error}</div>}
+    <form onSubmit={handleSubmit} className={compStyles.authForm}>
+      {error && <div className={compStyles.errorAlert}>{error}</div>}
 
       <div>
-        <label htmlFor="username" className={styles.label}>
+        <label htmlFor="username" className={commonStyles.label}>
           Username
         </label>
         <input
@@ -57,13 +58,13 @@ export default function SignupForm() {
           maxLength={50}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className={styles.input}
+          className={commonStyles.input}
         />
-        {fieldErrors.username && <p className={styles.fieldError}>{fieldErrors.username}</p>}
+        {fieldErrors.username && <p className={compStyles.fieldError}>{fieldErrors.username}</p>}
       </div>
 
       <div>
-        <label htmlFor="email" className={styles.label}>
+        <label htmlFor="email" className={commonStyles.label}>
           Email
         </label>
         <input
@@ -73,13 +74,13 @@ export default function SignupForm() {
           maxLength={254}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className={styles.input}
+          className={commonStyles.input}
         />
-        {fieldErrors.email && <p className={styles.fieldError}>{fieldErrors.email}</p>}
+        {fieldErrors.email && <p className={compStyles.fieldError}>{fieldErrors.email}</p>}
       </div>
 
       <div>
-        <label htmlFor="password" className={styles.label}>
+        <label htmlFor="password" className={commonStyles.label}>
           Password
         </label>
         <input
@@ -90,23 +91,22 @@ export default function SignupForm() {
           autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className={styles.input}
+          className={commonStyles.input}
         />
-        {fieldErrors.password && <p className={styles.fieldError}>{fieldErrors.password}</p>}
+        {fieldErrors.password && <p className={compStyles.fieldError}>{fieldErrors.password}</p>}
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className={styles.btnPrimary}
-        style={{ width: "100%" }}
+        className={compStyles.authSubmit}
       >
         {loading ? "Creating account..." : "Sign Up"}
       </button>
 
-      <p className={styles.authFormFooter}>
+      <p className={compStyles.authFormFooter}>
         Already have an account?{" "}
-        <Link to="/login" className={styles.authFormLink}>
+        <Link to="/login" className={compStyles.authFormLink}>
           Login
         </Link>
       </p>

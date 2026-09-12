@@ -1,0 +1,62 @@
+/* =========================
+   HomePage
+   ========================= */
+.homeIntro {
+  text-align: center;
+  padding: 6rem 0 5rem;
+}
+
+.homeIntroText {
+  font-family: var(--font-serif);
+  color: var(--color-slate);
+  font-size: 2.25rem;
+  line-height: 1.4;
+}
+
+.homeIntroText strong {
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 2.5rem;
+}
+
+.homeTitle {
+  font-family: var(--font-serif);
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 1.75rem;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  color: var(--color-ember);
+  font-size: 14px;
+  margin-bottom: 1rem;
+  text-transform: lowercase;
+}
+
+.homeSubtitle {
+  font-family: var(--font-serif);
+  color: var(--color-slate);
+  font-size: 1.375rem;
+  line-height: 1.5;
+}
+
+.inlineSpinnerWrap {
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+.retryLink {
+  margin-top: 1.25rem;
+  color: var(--color-verdigris);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+.retryLink:hover {
+  color: var(--color-ember);
+  text-decoration: underline;
+}

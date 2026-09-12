@@ -1,6 +1,6 @@
 import type { Post, Pagination } from "../types";
 import PostCard from "./PostCard";
-import styles from "../styles/app.module.css";
+import styles from "../styles/components.module.css";
 
 interface PostListProps {
   posts: Post[];
@@ -20,8 +20,8 @@ export default function PostList({
   return (
     <div>
       <div className={styles.postList}>
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
+        {posts.map((post, i) => (
+          <PostCard key={post.id} post={post} index={i} />
         ))}
       </div>
 

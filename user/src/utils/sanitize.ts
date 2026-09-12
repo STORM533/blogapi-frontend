@@ -13,5 +13,5 @@ const CONFIG = {
 };
 
 export function sanitize(html: string): string {
-  return DOMPurify.sanitize(html, CONFIG);
+  return DOMPurify.sanitize(html, CONFIG).replace(/&nbsp;/g, " ");
 }

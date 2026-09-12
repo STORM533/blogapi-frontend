@@ -1,0 +1,31 @@
+/* =========================
+   NotFoundPage
+   ========================= */
+.notFound {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.notFoundCode {
+  font-family: var(--font-serif);
+  font-size: 3.75rem;
+  font-weight: 600;
+  color: rgba(62, 107, 94, 0.25);
+  margin-bottom: 1rem;
+}
+
+.notFoundText {
+  font-family: var(--font-serif);
+  color: var(--color-slate);
+  margin-bottom: 1.5rem;
+}
+
+.homeLink {
+  color: var(--color-verdigris);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-decoration: none;
+}
+.homeLink:hover {
+  color: var(--color-ember);
+}

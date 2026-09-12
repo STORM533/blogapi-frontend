@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import LoginForm from "../components/LoginForm";
-import styles from "../styles/app.module.css";
+import styles from "../styles/auth.module.css";
 
 export default function LoginPage() {
   const { user, loading } = useAuth();
@@ -11,10 +11,10 @@ export default function LoginPage() {
 
   return (
     <div className={styles.authPageWrap}>
+      <div className={styles.brandSmall}>STORM Blog</div>
+      <p className={styles.tagline}>welcome back</p>
       <h1 className={styles.authPageTitle}>Login</h1>
-      <div className={styles.card}>
-        <LoginForm />
-      </div>
+      <LoginForm />
     </div>
   );
 }

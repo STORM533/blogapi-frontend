@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getMe, getMyComments } from "../api/users";
 import type { User, MyComment, Pagination } from "../types";
 import ProtectedRoute from "../components/ProtectedRoute";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Link } from "react-router-dom";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import compStyles from "../styles/components.module.css";
+import profileStyles from "../styles/profile.module.css";
 
 function ProfileContent() {
   const [user, setUser] = useState<User | null>(null);
@@ -17,89 +19,117 @@ function ProfileContent() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const fetchComments = async (page: number) => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      setLoading(true);
+      const [userData, commentsData] = await Promise.all([
+        getMe(controller.signal),
+        getMyComments(page, 10, controller.signal),
+      ]);
+      setUser(userData);
+      setComments(commentsData.comments);
+      setPagination(commentsData.pagination);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Failed to load profile");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const controller = new AbortController();
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [userData, commentsData] = await Promise.all([
-          getMe(controller.signal),
-          getMyComments(1, 10, controller.signal),
-        ]);
-        setUser(userData);
-        setComments(commentsData.comments);
-        setPagination(commentsData.pagination);
-      } catch (err) {
-        if (err instanceof DOMException && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : "Failed to load profile");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-    return () => controller.abort();
+    fetchComments(1);
+    return () => abortRef.current?.abort();
   }, []);
 
   if (loading) return <LoadingSpinner />;
 
   if (error || !user) {
     return (
-      <div className={styles.errorWrap}>
-        <p className={styles.errorText}>{error || "Failed to load profile"}</p>
+      <div className={compStyles.errorWrap}>
+        <p className={compStyles.errorText}>{error || "Failed to load profile"}</p>
       </div>
     );
   }
 
   return (
-    <div className={styles.profileWrap}>
-      <h1 className={styles.pageTitle}>Profile</h1>
+    <div className={profileStyles.profileWrap}>
+      <h1 className={commonStyles.pageTitle}>Profile</h1>
 
-      <div className={styles.infoCard}>
-        <div className={styles.infoFields}>
+      <div className={profileStyles.infoCard}>
+        <div className={profileStyles.infoFields}>
           <div>
-            <span className={styles.fieldLabel}>Username</span>
-            <p className={styles.fieldValue}>{user.username}</p>
+            <span className={profileStyles.fieldLabel}>Username</span>
+            <p className={profileStyles.fieldValue}>{user.username}</p>
           </div>
           <div>
-            <span className={styles.fieldLabel}>Email</span>
-            <p className={styles.fieldValue}>{user.email}</p>
+            <span className={profileStyles.fieldLabel}>Email</span>
+            <p className={profileStyles.fieldValue}>{user.email}</p>
           </div>
           <div>
-            <span className={styles.fieldLabel}>Joined</span>
-            <p className={styles.fieldValue}>
+            <span className={profileStyles.fieldLabel}>Joined</span>
+            <p className={profileStyles.fieldValue}>
               {new Date(user.createdAt).toLocaleDateString()}
             </p>
           </div>
         </div>
       </div>
 
-      <h2 className={styles.sectionTitle}>
+      <h2 className={profileStyles.sectionTitle}>
         Your Comments ({pagination.total})
       </h2>
 
       {comments.length === 0 ? (
-        <p className={styles.emptyProfileComments}>
+        <p className={profileStyles.emptyProfileComments}>
           You haven't posted any comments yet.
         </p>
       ) : (
-        <div className={styles.profileCommentList}>
-          {comments.map((comment) => (
-            <div key={comment.id} className={styles.profileCommentCard}>
-              <Link
-                to={`/post/${comment.post.id}`}
-                className={styles.profileCommentLink}
+        <>
+          <div className={profileStyles.profileCommentList}>
+            {comments.map((comment) => (
+              <div key={comment.id} className={profileStyles.profileCommentCard}>
+                <Link
+                  to={`/post/${comment.post.id}`}
+                  className={profileStyles.profileCommentLink}
+                >
+                  {comment.post.title}
+                </Link>
+                <p className={profileStyles.profileCommentText}>{comment.content}</p>
+                <p className={profileStyles.profileCommentDate}>
+                  {new Date(comment.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {pagination.totalPages > 1 && (
+            <div className={compStyles.pagination}>
+              <button
+                onClick={() => fetchComments(pagination.page - 1)}
+                disabled={pagination.page <= 1}
+                className={compStyles.pageBtn}
               >
-                {comment.post.title}
-              </Link>
-              <p className={styles.profileCommentText}>{comment.content}</p>
-              <p className={styles.profileCommentDate}>
-                {new Date(comment.createdAt).toLocaleDateString()}
-              </p>
+                Previous
+              </button>
+              <span className={compStyles.pageInfo}>
+                Page {pagination.page} of {pagination.totalPages}
+              </span>
+              <button
+                onClick={() => fetchComments(pagination.page + 1)}
+                disabled={pagination.page >= pagination.totalPages}
+                className={compStyles.pageBtn}
+              >
+                Next
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );

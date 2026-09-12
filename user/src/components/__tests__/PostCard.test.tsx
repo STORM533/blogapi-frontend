@@ -34,7 +34,7 @@ describe("PostCard", () => {
   it("renders post title", () => {
     render(
       <MemoryRouter>
-        <PostCard post={mockPost} />
+        <PostCard post={mockPost} index={0} />
       </MemoryRouter>,
     );
     expect(screen.getByText("Test Post Title")).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe("PostCard", () => {
   it("renders post content", () => {
     render(
       <MemoryRouter>
-        <PostCard post={mockPost} />
+        <PostCard post={mockPost} index={0} />
       </MemoryRouter>,
     );
     expect(
@@ -54,7 +54,7 @@ describe("PostCard", () => {
   it("renders author username", () => {
     render(
       <MemoryRouter>
-        <PostCard post={mockPost} />
+        <PostCard post={mockPost} index={0} />
       </MemoryRouter>,
     );
     expect(screen.getByText("by testuser")).toBeInTheDocument();
@@ -63,7 +63,7 @@ describe("PostCard", () => {
   it("renders comment count", () => {
     render(
       <MemoryRouter>
-        <PostCard post={mockPost} />
+        <PostCard post={mockPost} index={0} />
       </MemoryRouter>,
     );
     expect(screen.getByText("5 comments")).toBeInTheDocument();
@@ -72,7 +72,7 @@ describe("PostCard", () => {
   it("renders formatted date", () => {
     render(
       <MemoryRouter>
-        <PostCard post={mockPost} />
+        <PostCard post={mockPost} index={0} />
       </MemoryRouter>,
     );
     expect(screen.getByText(/15\/01\/2024/)).toBeInTheDocument();
@@ -81,7 +81,7 @@ describe("PostCard", () => {
   it("links to post detail page", () => {
     render(
       <MemoryRouter>
-        <PostCard post={mockPost} />
+        <PostCard post={mockPost} index={0} />
       </MemoryRouter>,
     );
     const link = screen.getByText("Test Post Title").closest("a");

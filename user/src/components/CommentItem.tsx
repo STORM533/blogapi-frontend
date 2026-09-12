@@ -3,7 +3,8 @@ import type { Comment } from "../types";
 import { useAuth } from "../context/AuthContext";
 import { updateComment, deleteComment } from "../api/comments";
 import { FetchError } from "../api/client";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import compStyles from "../styles/components.module.css";
 
 interface CommentItemProps {
   comment: Comment;
@@ -64,17 +65,17 @@ export default function CommentItem({
   };
 
   return (
-    <div className={styles.commentItem}>
-      <div className={styles.commentHeader}>
-        <span className={styles.commentUsername}>
+    <div className={compStyles.commentItem}>
+      <div className={compStyles.commentHeader}>
+        <span className={compStyles.commentUsername}>
           {comment.user.username}
         </span>
-        {isOwner && <span className={styles.youBadge}>You</span>}
-        <span className={styles.commentDate}>
+        {isOwner && <span className={compStyles.youBadge}>You</span>}
+        <span className={compStyles.commentDate}>
           · {new Date(comment.createdAt).toLocaleDateString()}
         </span>
         {isOwner && !isEditing && (
-          <div className={styles.commentActions}>
+          <div className={compStyles.commentActions}>
             <button
               onClick={() => {
                 setIsEditing(true);
@@ -82,13 +83,13 @@ export default function CommentItem({
                 setError(null);
                 setFieldErrors({});
               }}
-              className={styles.commentEditBtn}
+              className={compStyles.commentEditBtn}
             >
               Edit
             </button>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className={styles.commentDeleteBtn}
+              className={compStyles.commentDeleteBtn}
             >
               Delete
             </button>
@@ -96,22 +97,22 @@ export default function CommentItem({
         )}
       </div>
 
-      {error && <p className={styles.commentError}>{error}</p>}
+      {error && <p className={compStyles.commentError}>{error}</p>}
 
       {isEditing ? (
         <div>
           <textarea
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
-            className={styles.editTextarea}
+            className={compStyles.editTextarea}
             rows={3}
           />
-          {fieldErrors.content && <p className={styles.fieldError}>{fieldErrors.content}</p>}
-          <div className={styles.editActions}>
+          {fieldErrors.content && <p className={compStyles.fieldError}>{fieldErrors.content}</p>}
+          <div className={compStyles.editActions}>
             <button
               onClick={handleSave}
               disabled={loading || !editContent.trim()}
-              className={styles.btnPrimary}
+              className={commonStyles.btnPrimary}
             >
               {loading ? "Saving..." : "Save"}
             </button>
@@ -122,20 +123,20 @@ export default function CommentItem({
                 setError(null);
                 setFieldErrors({});
               }}
-              className={styles.cancelTextBtn}
+              className={compStyles.cancelTextBtn}
             >
               Cancel
             </button>
           </div>
         </div>
       ) : showDeleteConfirm ? (
-        <div className={styles.deleteConfirm}>
-          <p className={styles.deleteConfirmText}>Delete this comment?</p>
-          <div className={styles.deleteConfirmActions}>
+        <div className={compStyles.deleteConfirm}>
+          <p className={compStyles.deleteConfirmText}>Delete this comment?</p>
+          <div className={compStyles.deleteConfirmActions}>
             <button
               onClick={handleDelete}
               disabled={loading}
-              className={styles.btnDanger}
+              className={commonStyles.btnDanger}
             >
               {loading ? "Deleting..." : "Delete"}
             </button>
@@ -144,14 +145,14 @@ export default function CommentItem({
                 setShowDeleteConfirm(false);
                 setError(null);
               }}
-              className={styles.cancelTextBtn}
+              className={compStyles.cancelTextBtn}
             >
               Cancel
             </button>
           </div>
         </div>
       ) : (
-        <p className={styles.commentBody}>{comment.content}</p>
+        <p className={compStyles.commentBody}>{comment.content}</p>
       )}
     </div>
   );

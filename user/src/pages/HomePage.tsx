@@ -3,7 +3,8 @@ import { getPosts } from "../api/posts";
 import type { Post, Pagination } from "../types";
 import PostList from "../components/PostList";
 import LoadingSpinner from "../components/LoadingSpinner";
-import styles from "../styles/app.module.css";
+import homeStyles from "../styles/home.module.css";
+import compStyles from "../styles/components.module.css";
 
 export default function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -45,9 +46,9 @@ export default function HomePage() {
 
   if (error && posts.length === 0) {
     return (
-      <div className={styles.errorWrap}>
-        <p className={styles.errorText}>{error}</p>
-        <button onClick={() => fetchPosts(1)} className={styles.retryLink}>
+      <div className={compStyles.errorWrap}>
+        <p className={compStyles.errorText}>{error}</p>
+        <button onClick={() => fetchPosts(1)} className={homeStyles.retryLink}>
           Try again
         </button>
       </div>
@@ -56,10 +57,12 @@ export default function HomePage() {
 
   return (
     <div>
-      <h1 className={styles.homeTitle}>Latest Posts</h1>
+      <div className={homeStyles.homeIntro}>
+        <p className={homeStyles.homeIntroText}>building things and thoughts by <strong>STORM</strong></p>
+      </div>
       {loading && (
-        <div className={styles.inlineSpinnerWrap}>
-          <div className={styles.spinnerSm} />
+        <div className={homeStyles.inlineSpinnerWrap}>
+          <div className={compStyles.spinnerSm} />
         </div>
       )}
       <PostList

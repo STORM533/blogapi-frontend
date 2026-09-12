@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 import PostContent from "../PostContent";
 import type { PostDetail } from "../../types";
 
@@ -19,22 +20,22 @@ const mockPost: PostDetail = {
 
 describe("PostContent", () => {
   it("renders post title", () => {
-    render(<PostContent post={mockPost} />);
+    render(<MemoryRouter><PostContent post={mockPost} /></MemoryRouter>);
     expect(screen.getByText("Test Post Title")).toBeInTheDocument();
   });
 
   it("renders author username", () => {
-    render(<PostContent post={mockPost} />);
+    render(<MemoryRouter><PostContent post={mockPost} /></MemoryRouter>);
     expect(screen.getByText("by testuser")).toBeInTheDocument();
   });
 
   it("renders formatted date", () => {
-    render(<PostContent post={mockPost} />);
+    render(<MemoryRouter><PostContent post={mockPost} /></MemoryRouter>);
     expect(screen.getByText(/15\/01\/2024/)).toBeInTheDocument();
   });
 
   it("renders post content", () => {
-    const { container } = render(<PostContent post={mockPost} />);
+    const { container } = render(<MemoryRouter><PostContent post={mockPost} /></MemoryRouter>);
     const content = container.querySelector("[class*='articleContent']");
     expect(content).toBeInTheDocument();
     expect(content?.textContent).toContain("First paragraph.");

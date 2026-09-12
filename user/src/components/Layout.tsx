@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import styles from "../styles/app.module.css";
+import Footer from "./Footer";
+import styles from "../styles/common.module.css";
 
 export default function Layout() {
   const { user, logout } = useAuth();
@@ -13,8 +14,9 @@ export default function Layout() {
     <div className={styles.page}>
       <nav className={styles.nav}>
         <div className={styles.navInner}>
-          <Link to="/" className={styles.brand}>
-            Blog
+          <Link to="/" className={styles.brandWrap}>
+            <span className={styles.brand}>STORM Blog</span>
+            <span className={styles.brandTagline}>fiction &amp; field notes</span>
           </Link>
           <div className={styles.navLinks}>
             {user ? (
@@ -44,6 +46,7 @@ export default function Layout() {
       <main className={styles.main}>
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 }
