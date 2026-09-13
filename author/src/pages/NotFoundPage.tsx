@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import styles from "../styles/app.module.css";
+import componentStyles from "../styles/components.module.css";
 
 export default function NotFoundPage() {
   return (
-    <div className={styles.notFound}>
-      <h1 className={styles.notFoundCode}>404</h1>
-      <p className={styles.notFoundText}>Page not found</p>
-      <Link to="/" className={styles.homeLink}>
+    <div className={componentStyles.notFound}>
+      <h1 className={componentStyles.notFoundCode}>404</h1>
+      <p className={componentStyles.notFoundText}>Page not found</p>
+      <Link to="/" className={componentStyles.homeLink}>
         Back to dashboard
       </Link>
     </div>

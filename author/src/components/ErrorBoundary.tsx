@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from "react";
-import styles from "../styles/app.module.css";
+import componentStyles from "../styles/components.module.css";
 
 interface Props {
   children: ReactNode;
@@ -23,15 +23,15 @@ export default class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className={styles.errorPage}>
-          <div className={styles.errorCard}>
-            <h1 className={styles.errorTitle}>Something went wrong</h1>
-            <p className={styles.errorMessage}>
+        <div className={componentStyles.errorPage}>
+          <div className={componentStyles.errorCard}>
+            <h1 className={componentStyles.errorTitle}>Something went wrong</h1>
+            <p className={componentStyles.errorMessage}>
               An unexpected error occurred. Please try again.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className={styles.reloadBtn}
+              className={componentStyles.reloadBtn}
             >
               Reload page
             </button>

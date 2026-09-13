@@ -1,3 +1,15 @@
+:root {
+  --color-paper: #F4F5F1;
+  --color-ink: #1B1930;
+  --color-slate: #5C5A72;
+  --color-verdigris: #3E6B5E;
+  --color-ember: #A8572B;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
 body {
   margin: 0;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
 }

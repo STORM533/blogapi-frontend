@@ -7,7 +7,8 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useToast } from "../context/ToastContext";
 import type { PostFormData, Comment } from "../types";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import postsStyles from "../styles/posts.module.css";
 
 export default function EditPostPage() {
   const { id } = useParams<{ id: string }>();
@@ -87,41 +88,39 @@ export default function EditPostPage() {
 
   if (error || !post) {
     return (
-      <div className={styles.errorWrap}>
-        <p className={styles.errorText}>{error || "Post not found"}</p>
+      <div className={postsStyles.errorWrap}>
+        <p className={commonStyles.errorText}>{error || "Post not found"}</p>
       </div>
     );
   }
 
   return (
-    <div className={styles.editPageWrap}>
-      <h1 className={styles.pageTitleSpaced}>Edit Post</h1>
-      <div className={styles.statCard}>
-        <PostForm initialData={post} onSubmit={handleSubmit} submitLabel="Update Post" />
-      </div>
+    <div className={postsStyles.editPageWrap}>
+      <h1 className={commonStyles.pageTitleSpaced}>Edit Post</h1>
+      <PostForm initialData={post} onSubmit={handleSubmit} submitLabel="Update Post" />
 
-      <div className={styles.commentsSection}>
-        <h2 className={styles.commentsTitle}>Comments</h2>
+      <div className={postsStyles.commentsSection}>
+        <h2 className={postsStyles.commentsTitle}>Comments</h2>
         {commentsLoading ? (
           <LoadingSpinner />
         ) : comments.length === 0 ? (
-          <p className={styles.commentsEmpty}>No comments yet.</p>
+          <p className={postsStyles.commentsEmpty}>No comments yet.</p>
         ) : (
           comments.map((comment) => (
-            <div key={comment.id} className={styles.commentItem}>
-              <div className={styles.commentHeader}>
-                <span className={styles.commentUsername}>{comment.user.username}</span>
-                <span className={styles.commentDate}>
+            <div key={comment.id} className={postsStyles.commentItem}>
+              <div className={postsStyles.commentHeader}>
+                <span className={postsStyles.commentUsername}>{comment.user.username}</span>
+                <span className={postsStyles.commentDate}>
                   · {new Date(comment.createdAt).toLocaleDateString()}
                 </span>
                 <button
                   onClick={() => setDeleteTarget(comment)}
-                  className={styles.commentDeleteBtn}
+                  className={postsStyles.commentDeleteBtn}
                 >
                   Delete
                 </button>
               </div>
-              <p className={styles.commentBody}>{comment.content}</p>
+              <p className={postsStyles.commentBody}>{comment.content}</p>
             </div>
           ))
         )}

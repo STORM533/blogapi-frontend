@@ -1,4 +1,5 @@
-import styles from "../styles/app.module.css";
+import componentStyles from "../styles/components.module.css";
+import commonStyles from "../styles/common.module.css";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -18,15 +19,15 @@ export default function ConfirmDialog({
   if (!isOpen) return null;
 
   return (
-    <div className={styles.confirmOverlay}>
-      <div className={styles.confirmCard}>
-        <h3 className={styles.confirmTitle}>{title}</h3>
-        <p className={styles.confirmMessage}>{message}</p>
-        <div className={styles.confirmActions}>
-          <button onClick={onCancel} className={styles.btnOutline}>
+    <div className={componentStyles.confirmOverlay}>
+      <div className={componentStyles.confirmCard}>
+        <h3 className={componentStyles.confirmTitle}>{title}</h3>
+        <p className={componentStyles.confirmMessage}>{message}</p>
+        <div className={componentStyles.confirmActions}>
+          <button onClick={onCancel} className={commonStyles.btnOutline}>
             Cancel
           </button>
-          <button onClick={onConfirm} className={styles.btnDanger}>
+          <button onClick={onConfirm} className={commonStyles.btnDanger}>
             Delete
           </button>
         </div>

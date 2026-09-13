@@ -1,9 +1,9 @@
-import styles from "../styles/app.module.css";
+import componentStyles from "../styles/components.module.css";
 
 export default function LoadingSpinner() {
   return (
-    <div className={styles.spinnerWrap}>
-      <div className={styles.spinner} />
+    <div className={componentStyles.spinnerWrap}>
+      <div className={componentStyles.spinner} />
     </div>
   );
 }

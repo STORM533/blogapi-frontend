@@ -5,7 +5,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import styles from "../styles/app.module.css";
+import componentStyles from "../styles/components.module.css";
 
 interface Toast {
   id: number;
@@ -36,12 +36,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className={styles.toastContainer}>
+      <div className={componentStyles.toastContainer}>
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`${styles.toast} ${
-              toast.type === "success" ? styles.toastSuccess : styles.toastError
+            className={`${componentStyles.toast} ${
+              toast.type === "success" ? componentStyles.toastSuccess : componentStyles.toastError
             }`}
           >
             {toast.message}

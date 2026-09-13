@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { getPostStats } from "../api/posts";
+import { useAuth } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
-import styles from "../styles/app.module.css";
+import dashboardStyles from "../styles/dashboard.module.css";
 
 export default function DashboardPage() {
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     totalPosts: 0,
     publishedPosts: 0,
@@ -33,27 +35,32 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className={styles.pageTitleSpaced}>Dashboard</h1>
+      <div className={dashboardStyles.welcomeHero}>
+        <p className={dashboardStyles.welcomePrefix}>Welcome back,</p>
+        <h1 className={dashboardStyles.welcomeName}>{user?.username}</h1>
+        <p className={dashboardStyles.welcomeTagline}>editorial tools at your disposal</p>
+        <div className={dashboardStyles.welcomeDivider} />
+      </div>
 
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <h2 className={styles.statLabel}>Total Posts</h2>
-          <p className={styles.statValue}>{stats.totalPosts}</p>
+      <div className={dashboardStyles.statsGrid}>
+        <div className={dashboardStyles.statCard}>
+          <h2 className={dashboardStyles.statLabel}>Total Posts</h2>
+          <p className={dashboardStyles.statValue}>{stats.totalPosts}</p>
         </div>
 
-        <div className={styles.statCard}>
-          <h2 className={styles.statLabel}>Published</h2>
-          <p className={styles.statValueGreen}>{stats.publishedPosts}</p>
+        <div className={dashboardStyles.statCard}>
+          <h2 className={dashboardStyles.statLabel}>Published</h2>
+          <p className={dashboardStyles.statValueGreen}>{stats.publishedPosts}</p>
         </div>
 
-        <div className={styles.statCard}>
-          <h2 className={styles.statLabel}>Drafts</h2>
-          <p className={styles.statValueYellow}>{stats.draftPosts}</p>
+        <div className={dashboardStyles.statCard}>
+          <h2 className={dashboardStyles.statLabel}>Drafts</h2>
+          <p className={dashboardStyles.statValueYellow}>{stats.draftPosts}</p>
         </div>
 
-        <div className={styles.statCard}>
-          <h2 className={styles.statLabel}>Total Comments</h2>
-          <p className={styles.statValueBlue}>{stats.totalComments}</p>
+        <div className={dashboardStyles.statCard}>
+          <h2 className={dashboardStyles.statLabel}>Total Comments</h2>
+          <p className={dashboardStyles.statValueBlue}>{stats.totalComments}</p>
         </div>
       </div>
     </div>

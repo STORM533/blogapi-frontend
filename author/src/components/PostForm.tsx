@@ -1,7 +1,8 @@
 import { Editor } from "@tinymce/tinymce-react";
 import { useState } from "react";
 import { FetchError } from "../api/client";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import postsStyles from "../styles/posts.module.css";
 import type { PostFormData } from "../types";
 interface PostFormProps {
   initialData?: PostFormData;
@@ -46,11 +47,11 @@ export default function PostForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.postForm}>
-      {error && <div className={styles.errorAlert}>{error}</div>}
+    <form onSubmit={handleSubmit} className={postsStyles.postForm}>
+      {error && <div className={commonStyles.errorAlert}>{error}</div>}
 
       <div>
-        <label htmlFor="title" className={styles.label}>
+        <label htmlFor="title" className={commonStyles.label}>
           Title
         </label>
         <input
@@ -60,67 +61,69 @@ export default function PostForm({
           maxLength={200}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className={styles.input}
+          className={commonStyles.input}
         />
         {fieldErrors.title && (
-          <p className={styles.fieldError}>{fieldErrors.title}</p>
+          <p className={postsStyles.errorText}>{fieldErrors.title}</p>
         )}
       </div>
 
       <div>
-        <label className={styles.label}>Content</label>
-        <Editor
-          tinymceScriptSrc="/tinymce/tinymce.min.js"
-          licenseKey="gpl"
-          value={content}
-          onEditorChange={(newContent) => setContent(newContent)}
-          init={{
-            height: 500,
-            menubar: false,
-            plugins: [
-              "advlist",
-              "autolink",
-              "lists",
-              "link",
-              "charmap",
-              "preview",
-              "anchor",
-              "searchreplace",
-              "visualblocks",
-              "fullscreen",
-              "insertdatetime",
-              "media",
-              "table",
-              "wordcount",
-            ],
-            toolbar:
-              "undo redo | blocks | bold italic underline strikethrough | " +
-              "alignleft aligncenter alignright alignjustify | " +
-              "bullist numlist outdent indent | link | removeformat",
-            content_style:
-              "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; }",
-            branding: false,
-            promotion: false,
-          }}
-        />
+        <label className={commonStyles.label}>Content</label>
+        <div className={postsStyles.editorWrap}>
+          <Editor
+            tinymceScriptSrc="/tinymce/tinymce.min.js"
+            licenseKey="gpl"
+            value={content}
+            onEditorChange={(newContent) => setContent(newContent)}
+            init={{
+              height: 500,
+              menubar: false,
+              plugins: [
+                "advlist",
+                "autolink",
+                "lists",
+                "link",
+                "charmap",
+                "preview",
+                "anchor",
+                "searchreplace",
+                "visualblocks",
+                "fullscreen",
+                "insertdatetime",
+                "media",
+                "table",
+                "wordcount",
+              ],
+              toolbar:
+                "undo redo | blocks | bold italic underline strikethrough | " +
+                "alignleft aligncenter alignright alignjustify | " +
+                "bullist numlist outdent indent | link | removeformat",
+              content_style:
+                "body { font-family: 'Cormorant Garamond', serif; font-size: 18px; line-height: 1.7; color: #1B1930; }",
+              branding: false,
+              promotion: false,
+            }}
+          />
+        </div>
         {fieldErrors.content && (
-          <p className={styles.fieldError}>{fieldErrors.content}</p>
+          <p className={postsStyles.errorText}>{fieldErrors.content}</p>
         )}
       </div>
 
-      <div className={styles.checkboxRow}>
+      <div className={postsStyles.checkboxRow}>
         <input
           id="published"
           type="checkbox"
           checked={published}
           onChange={(e) => setPublished(e.target.checked)}
         />
-        <label htmlFor="published" className={styles.checkboxLabel}>
+        <label htmlFor="published" className={postsStyles.checkboxLabel}>
           Publish immediately
         </label>
       </div>
 
-      <button type="submit" disabled={loading} className={styles.btnPrimary}>
+      <button type="submit" disabled={loading} className={commonStyles.btnPrimary}>
         {loading ? "Saving..." : submitLabel}
       </button>
     </form>

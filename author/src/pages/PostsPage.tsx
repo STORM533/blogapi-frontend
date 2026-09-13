@@ -5,7 +5,8 @@ import type { Post, Pagination } from "../types";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useToast } from "../context/ToastContext";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import postsStyles from "../styles/posts.module.css";
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -80,9 +81,9 @@ export default function PostsPage() {
 
   if (error) {
     return (
-      <div className={styles.errorWrap}>
-        <p className={styles.errorText}>{error}</p>
-        <button onClick={() => fetchPosts(1)} className={styles.retryBtn}>
+      <div className={postsStyles.errorWrap}>
+        <p className={commonStyles.errorText}>{error}</p>
+        <button onClick={() => fetchPosts(1)} className={postsStyles.retryBtn}>
           Try again
         </button>
       </div>
@@ -91,55 +92,55 @@ export default function PostsPage() {
 
   return (
     <div>
-      <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Posts</h1>
-        <Link to="/posts/new" className={styles.newPostBtn}>
+      <div className={postsStyles.pageHeader}>
+        <h1 className={commonStyles.pageTitle}>Posts</h1>
+        <Link to="/posts/new" className={postsStyles.newPostBtn}>
           New Post
         </Link>
       </div>
 
       {posts.length === 0 ? (
-        <p className={styles.errorText} style={{ color: "#6b7280" }}>No posts yet.</p>
+        <p className={commonStyles.errorText} style={{ color: "var(--color-slate)" }}>No posts yet.</p>
       ) : (
-        <div className={styles.tableCard}>
-          <div className={styles.tableWrap}>
-            <table className={styles.table}>
-              <thead className={styles.tableHead}>
-                <tr className={styles.tableHeadRow}>
-                  <th className={styles.th}>Title</th>
-                  <th className={styles.th}>Status</th>
-                  <th className={`${styles.th} ${styles.tableRowHidden}`}>Comments</th>
-                  <th className={`${styles.th} ${styles.tableRowHidden}`}>Created</th>
-                  <th className={styles.thActions}>Actions</th>
+        <div className={postsStyles.tableCard}>
+          <div className={postsStyles.tableWrap}>
+            <table className={postsStyles.table}>
+              <thead className={postsStyles.tableHead}>
+                <tr className={postsStyles.tableHeadRow}>
+                  <th className={postsStyles.th}>Title</th>
+                  <th className={postsStyles.th}>Status</th>
+                  <th className={`${postsStyles.th} ${postsStyles.tableRowHidden}`}>Comments</th>
+                  <th className={`${postsStyles.th} ${postsStyles.tableRowHidden}`}>Created</th>
+                  <th className={postsStyles.thActions}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {posts.map((post) => (
-                  <tr key={post.id} className={styles.tableRow}>
-                    <td className={styles.td}>
-                      <Link to={`/posts/${post.id}/edit`} className={styles.textLink}>
+                  <tr key={post.id} className={postsStyles.tableRow}>
+                    <td className={postsStyles.td}>
+                      <Link to={`/posts/${post.id}/edit`} className={commonStyles.textLink}>
                         {post.title}
                       </Link>
                     </td>
-                    <td className={styles.td}>
+                    <td className={postsStyles.td}>
                       <button
                         onClick={() => handleTogglePublish(post)}
-                        className={`${styles.statusBtn} ${post.published ? styles.statusPublished : styles.statusDraft}`}
+                        className={`${postsStyles.statusBtn} ${post.published ? postsStyles.statusPublished : postsStyles.statusDraft}`}
                       >
                         {post.published ? "Published" : "Draft"}
                       </button>
                     </td>
-                    <td className={`${styles.td} ${styles.tableRowHidden}`}>
+                    <td className={`${postsStyles.td} ${postsStyles.tableRowHidden}`}>
                       {post._count?.comments || 0}
                     </td>
-                    <td className={`${styles.td} ${styles.tableRowHidden}`}>
+                    <td className={`${postsStyles.td} ${postsStyles.tableRowHidden}`}>
                       {new Date(post.createdAt).toLocaleDateString()}
                     </td>
-                    <td className={styles.tdActions}>
-                      <Link to={`/posts/${post.id}/edit`} className={styles.textLink}>
+                    <td className={postsStyles.tdActions}>
+                      <Link to={`/posts/${post.id}/edit`} className={commonStyles.textLink}>
                         Edit
                       </Link>
-                      <button onClick={() => setDeleteTarget(post)} className={styles.deleteBtn}>
+                      <button onClick={() => setDeleteTarget(post)} className={postsStyles.deleteBtn}>
                         Delete
                       </button>
                     </td>
@@ -152,21 +153,21 @@ export default function PostsPage() {
       )}
 
       {pagination.totalPages > 1 && (
-        <div className={styles.pagination}>
+        <div className={postsStyles.pagination}>
           <button
             onClick={() => fetchPosts(pagination.page - 1)}
             disabled={pagination.page <= 1}
-            className={styles.pageBtn}
+            className={postsStyles.pageBtn}
           >
             Previous
           </button>
-          <span className={styles.pageInfo}>
+          <span className={postsStyles.pageInfo}>
             Page {pagination.page} of {pagination.totalPages}
           </span>
           <button
             onClick={() => fetchPosts(pagination.page + 1)}
             disabled={pagination.page >= pagination.totalPages}
-            className={styles.pageBtn}
+            className={postsStyles.pageBtn}
           >
             Next
           </button>

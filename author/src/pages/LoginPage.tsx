@@ -3,7 +3,8 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { FetchError } from "../api/client";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import authStyles from "../styles/auth.module.css";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -45,15 +46,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={styles.loginPage}>
-      <div className={styles.loginCard}>
-        <h1 className={styles.loginTitle}>Author Login</h1>
+    <div className={authStyles.loginPage}>
+      <div className={authStyles.loginCard}>
+        <div className={authStyles.loginBrand}>Blog Author</div>
+        <p className={authStyles.loginTagline}>editorial tools</p>
 
-        <form onSubmit={handleSubmit} className={styles.authForm}>
-          {error && <div className={styles.errorAlert}>{error}</div>}
+        <form onSubmit={handleSubmit} className={authStyles.authForm}>
+          {error && <div className={commonStyles.errorAlert}>{error}</div>}
 
           <div>
-            <label htmlFor="username" className={styles.label}>
+            <label htmlFor="username" className={commonStyles.label}>
               Username
             </label>
             <input
@@ -63,13 +65,13 @@ export default function LoginPage() {
               autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className={styles.input}
+              className={commonStyles.input}
             />
-            {fieldErrors.username && <p className={styles.fieldError}>{fieldErrors.username}</p>}
+            {fieldErrors.username && <p className={authStyles.fieldError}>{fieldErrors.username}</p>}
           </div>
 
           <div>
-            <label htmlFor="password" className={styles.label}>
+            <label htmlFor="password" className={commonStyles.label}>
               Password
             </label>
             <input
@@ -79,15 +81,15 @@ export default function LoginPage() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={styles.input}
+              className={commonStyles.input}
             />
-            {fieldErrors.password && <p className={styles.fieldError}>{fieldErrors.password}</p>}
+            {fieldErrors.password && <p className={authStyles.fieldError}>{fieldErrors.password}</p>}
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className={styles.btnLogin}
+            className={authStyles.authSubmit}
           >
             {loading ? "Logging in..." : "Login"}
           </button>

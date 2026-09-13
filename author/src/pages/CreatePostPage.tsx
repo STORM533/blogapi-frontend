@@ -3,7 +3,8 @@ import { createPost } from "../api/posts";
 import PostForm from "../components/PostForm";
 import { useToast } from "../context/ToastContext";
 import type { PostFormData } from "../types";
-import styles from "../styles/app.module.css";
+import commonStyles from "../styles/common.module.css";
+import postsStyles from "../styles/posts.module.css";
 
 export default function CreatePostPage() {
   const navigate = useNavigate();
@@ -16,9 +17,9 @@ export default function CreatePostPage() {
   };
 
   return (
-    <div className={styles.editPageWrap}>
-      <h1 className={styles.pageTitleSpaced}>New Post</h1>
-      <div className={styles.statCard}>
+    <div className={postsStyles.editPageWrap}>
+      <h1 className={commonStyles.pageTitleSpaced}>New Post</h1>
+      <div className={postsStyles.postForm}>
         <PostForm onSubmit={handleSubmit} submitLabel="Create Post" />
       </div>
     </div>

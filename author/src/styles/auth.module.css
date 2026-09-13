@@ -1,0 +1,85 @@
+/* =========================
+   Login
+   ========================= */
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-paper);
+}
+
+.loginCard {
+  max-width: 28rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem;
+  border: 1px solid rgba(62, 107, 94, 0.15);
+  border-radius: 0.5rem;
+}
+
+.loginBrand {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-align: center;
+  margin-bottom: 0.375rem;
+}
+
+.loginTagline {
+  font-family: var(--font-mono);
+  color: var(--color-verdigris);
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.authFormFooter {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--color-slate);
+}
+
+.authFormLink {
+  color: var(--color-verdigris);
+  text-decoration: none;
+}
+.authFormLink:hover {
+  color: var(--color-ember);
+}
+
+.authSubmit {
+  width: 100%;
+  background-color: var(--color-ember);
+  color: var(--color-paper);
+  padding: 0.875rem 1.75rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+}
+.authSubmit:hover {
+  filter: brightness(0.9);
+}
+.authSubmit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fieldError {
+  color: #dc2626;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1rem;
+  margin-top: 0.25rem;
+}
