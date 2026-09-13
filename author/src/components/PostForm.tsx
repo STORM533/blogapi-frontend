@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
-import type { PostFormData } from "../types";
+import { useState } from "react";
 import { FetchError } from "../api/client";
 import styles from "../styles/app.module.css";
-
+import type { PostFormData } from "../types";
 interface PostFormProps {
   initialData?: PostFormData;
   onSubmit: (data: PostFormData) => Promise<void>;
@@ -63,7 +62,9 @@ export default function PostForm({
           onChange={(e) => setTitle(e.target.value)}
           className={styles.input}
         />
-        {fieldErrors.title && <p className={styles.fieldError}>{fieldErrors.title}</p>}
+        {fieldErrors.title && (
+          <p className={styles.fieldError}>{fieldErrors.title}</p>
+        )}
       </div>
 
       <div>
@@ -76,7 +77,6 @@ export default function PostForm({
           init={{
             height: 500,
             menubar: false,
-            statusbar: false,
             plugins: [
               "advlist",
               "autolink",
@@ -103,7 +103,9 @@ export default function PostForm({
             promotion: false,
           }}
         />
-        {fieldErrors.content && <p className={styles.fieldError}>{fieldErrors.content}</p>}
+        {fieldErrors.content && (
+          <p className={styles.fieldError}>{fieldErrors.content}</p>
+        )}
       </div>
 
       <div className={styles.checkboxRow}>
@@ -118,11 +120,7 @@ export default function PostForm({
         </label>
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className={styles.btnPrimary}
-      >
+      <button type="submit" disabled={loading} className={styles.btnPrimary}>
         {loading ? "Saving..." : submitLabel}
       </button>
     </form>

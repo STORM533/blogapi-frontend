@@ -2,6 +2,12 @@ import type { ApiError } from "../types";
 
 const BASE_URL = "/api";
 
+let authToken: string | null = null;
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+}
+
 let onUnauthorized: (() => void) | null = null;
 
 export function setOnUnauthorized(fn: (() => void) | null) {
@@ -28,10 +34,13 @@ export async function apiFetch<T>(
     ...(options.headers as Record<string, string>),
   };
 
+  if (authToken) {
+    headers["Authorization"] = `Bearer ${authToken}`;
+  }
+
   const response = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers,
-    credentials: "include",
     cache: "no-store",
   });
 
@@ -44,6 +53,7 @@ export async function apiFetch<T>(
     }
 
     if (response.status === 401) {
+      setAuthToken(null);
       onUnauthorized?.();
     }
 

@@ -6,7 +6,7 @@ describe("apiFetch", () => {
     vi.restoreAllMocks();
   });
 
-  it("makes a GET request with correct headers and credentials", async () => {
+  it("makes a GET request with correct headers", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ data: "test" }),
@@ -19,7 +19,6 @@ describe("apiFetch", () => {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include",
       cache: "no-store",
     });
     expect(result).toEqual({ data: "test" });

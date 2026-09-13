@@ -1,18 +1,17 @@
 import {
   createContext,
-  useContext,
-  useState,
-  useEffect,
   useCallback,
+  useContext,
+  useEffect,
   useRef,
+  useState,
   type ReactNode,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import type { User, LoginRequest, SignupRequest } from "../types";
 import { getMe } from "../api/users";
 import { login as apiLogin, signup as apiSignup } from "../api/auth";
-import { apiFetch } from "../api/client";
-import { setOnUnauthorized } from "../api/client";
+import { setAuthToken, setOnUnauthorized } from "../api/client";
 
 interface AuthContextType {
   user: User | null;
@@ -22,6 +21,7 @@ interface AuthContextType {
   logout: () => void;
 }
 
+const AUTH_TOKEN_KEY = "user_auth_token";
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -32,7 +32,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     abortRef.current?.abort();
-    apiFetch("/auth/logout", { method: "POST" }).catch(() => {});
+    setAuthToken(null);
+    sessionStorage.removeItem(AUTH_TOKEN_KEY);
     setUser(null);
     setLoading(false);
     navigate("/login");
@@ -58,6 +59,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
+    const stored = sessionStorage.getItem(AUTH_TOKEN_KEY);
+    if (stored) {
+      setAuthToken(stored);
+    }
     const controller = new AbortController();
     abortRef.current = controller;
     fetchUser(controller.signal).finally(() => {
@@ -70,7 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [fetchUser]);
 
   const login = async (data: LoginRequest) => {
-    await apiLogin(data);
+    const response = await apiLogin(data);
+    setAuthToken(response.token);
+    sessionStorage.setItem(AUTH_TOKEN_KEY, response.token);
     await fetchUser();
   };
 

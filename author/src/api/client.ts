@@ -3,11 +3,13 @@ import type { ApiError } from "../types";
 const BASE_URL = "/api";
 
 let onUnauthorized: (() => void) | null = null;
-
+let authToken: string | null = null;
 export function setOnUnauthorized(fn: (() => void) | null) {
   onUnauthorized = fn;
 }
-
+export function setAuthToken(token: string | null) {
+  authToken = token;
+}
 export class FetchError extends Error {
   status: number;
   data: ApiError;
@@ -27,11 +29,12 @@ export async function apiFetch<T>(
     "Content-Type": "application/json",
     ...(options.headers as Record<string, string>),
   };
-
+  if (authToken) {
+    headers.Authorization = `Bearer ${authToken}`;
+  }
   const response = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers,
-    credentials: "include",
     cache: "no-store",
   });
 
@@ -44,6 +47,7 @@ export async function apiFetch<T>(
     }
 
     if (response.status === 401) {
+      setAuthToken(null);
       onUnauthorized?.();
     }
 
