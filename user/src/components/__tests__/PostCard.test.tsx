@@ -40,17 +40,6 @@ describe("PostCard", () => {
     expect(screen.getByText("Test Post Title")).toBeInTheDocument();
   });
 
-  it("renders post content", () => {
-    render(
-      <MemoryRouter>
-        <PostCard post={mockPost} index={0} />
-      </MemoryRouter>,
-    );
-    expect(
-      screen.getByText(/This is a test post content/),
-    ).toBeInTheDocument();
-  });
-
   it("renders author username", () => {
     render(
       <MemoryRouter>

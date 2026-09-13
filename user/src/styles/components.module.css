@@ -122,18 +122,6 @@
   color: var(--color-ember);
 }
 
-.postCardContent {
-  margin-top: 0.5rem;
-  font-family: var(--font-serif);
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  color: var(--color-slate);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 .postCardMeta {
   margin-top: 1rem;
   display: flex;
