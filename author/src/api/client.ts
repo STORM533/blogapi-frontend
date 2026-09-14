@@ -1,6 +1,6 @@
 import type { ApiError } from "../types";
 
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 let onUnauthorized: (() => void) | null = null;
 let authToken: string | null = null;
